@@ -18,6 +18,30 @@ Object.keys(routes).forEach(file => {
   app.use('/' + file, cnt);
 });
 
+// error handler
+app.use(function(err, req, res, next) {
+  // render err page
+  if (typeof err === 'string') {
+    err = {
+      status: 500,
+      message: err
+    };
+  }
+
+  res.status(err.status || 500);
+  let errorObj = {
+    error: true,
+    msg: err.message,
+    errCode: err.status || 500
+  };
+
+  if (err.trace) {
+    errorObj.trace = err.trace;
+  }
+
+  res.json(errorObj);
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
